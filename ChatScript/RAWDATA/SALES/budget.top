@@ -1,0 +1,20 @@
+topic: ~budget ( price budget money spend "how much" dollar ~currency ~moneynumber buck )
+
+?: BUDGET ( [price budget money] )
+	$budget = True
+	[My budget is around $60.]
+	[Somewhere like 60 dollars.]
+	[I have 60 bucks to spend.]
+	[60 dollars is what I was thinking.]
+
+?: ( how much * spend ) ^reuse(BUDGET)
+
+?: ( what * be * [price budget] ) ^reuse(BUDGET)
+
+?: (be [ dollar ~currency ~moneynumber ]) ^reuse(BUDGET)
+
+?: (~aux_verb [ dollar ~currency ~moneynumber ] be) ^reuse(BUDGET)
+
+?: (how * [ dollar ~currency ~moneynumber ]) ^reuse(BUDGET)
+
+?: (~positiveinteger buck) ^reuse(BUDGET)

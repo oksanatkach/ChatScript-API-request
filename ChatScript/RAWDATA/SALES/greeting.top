@@ -1,0 +1,26 @@
+topic: ~greeting ()
+
+t:	[Hello.]
+	[Hi there.]
+	[Hey.]
+	[Good day.]
+	[Hi!]
+	[Hello, I want to buy something.]
+	[Hello. I'd like to make a purchase.]
+	[Hi, I have to pick out a present.]
+	[Hi there, can I get some help?]
+	[Hello, can you help me here?]
+	[Hey, can you help me pick out a present?]
+	[Hi there, I need a lego set.]
+	[Hi. I want to buy a lego set.]
+	[Hello, I'd like to purchase a lego set.]
+
+	a: EXTEND ( * [can may] * [help assist] * )
+		[I need a lego set.]
+		[I want to buy a lego set.]
+		[I'd like to purchase a lego set.]
+
+ 	a: ( * what * [need look want] *) ^reuse(EXTEND)
+
+	a: ( * ~yes * what * [need look want] * ) ^reuse(EXTEND)
+	a: ( * can_I_help_you * ) ^reuse(EXTEND)

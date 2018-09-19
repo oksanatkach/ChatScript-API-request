@@ -1,0 +1,23 @@
+topic: ~age ( year age range grade young old small big teenager toddler tween infant preschooler gradeschooler middleschooler highschooler school preschool highschool middleschool gradeschool kindergarden)
+
+?: AGE ( [age "years old"] )
+	$age = True
+	It's for a 10-year old kid.
+
+?: ( how old ) ^reuse(AGE)
+
+?: ( "age range" ) ^reuse(AGE)
+
+?: GRADE ( what grade )
+	$age = True
+	She's in the 4th grade.
+
+?: ( be * [young old small big] ) ^reuse(AGE)
+
+?: ( be * [teenager toddler tween infant] ) ^reuse(AGE)
+
+?: ( be * [preschooler gradeschooler middleschooler highschooler] ) ^reuse(GRADE)
+
+?: ( do * [go in] * [school preschool highschool middleschool gradeschool kindergarden] ) ^reuse(GRADE)
+
+?: ( junior ) ^reuse(AGE)

@@ -1,0 +1,15 @@
+topic: ~interest (care like love adore enjoy interest enthusiastic excited passionate)
+
+?: INTEREST (what be * [interest enthusiastic excited passionate])
+	$interest = True
+	[She likes cars.]
+	[She is interested in cars.]
+	[Cars is her interest.]
+	[She really likes cars and related things.]
+	[Well, I guess she likes cars the most.]
+
+?: (what do * [like love adore enjoy care]) ^reuse(INTEREST)
+
+?: (~aux_verb * [say think assume] * [like love adore enjoy care]) ^reuse(INTEREST)
+
+?: (be * [interest enthusiastic excited passionate]) ^reuse(INTEREST)

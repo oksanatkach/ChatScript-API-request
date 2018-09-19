@@ -1,0 +1,60 @@
+
+outputmacro: check_link(^link)
+	$_data = ^'{"link":"^link"}'
+	$_url = ^"http://127.0.0.1:5000/link"
+	$_response = ^jsonopen(POST $_url $_data "")
+	$_response.match
+
+patternmacro: link()
+	(*shop.lego.com*)
+
+topic: ~suggestion ( suggest buy purchase aquire get fit right "how about" "what about" "this one")
+
+u: ASK ( [buy purchase aquire get] this )
+	^keep() ^repeat()
+	Can you send me the link?
+		
+		a:	(^link())
+			if (^check_link(%originalinput) == 1) {
+				[Sure, this is perfect. Thank you!]
+				[Awesome, exactly what I've been looking for.]
+				[Thanks, this one seems to be right.]
+			}
+			
+			else {
+				if (!$budget AND !$age AND !$interest) {
+					[No, this is not what I'm looking for.]
+					[No, I don't think this fits.]
+					[No, I don't think this one is right.]
+					[This is not what I want.]
+					^end(CALL)}
+				if (!$budget) {
+					[I don't know how much it costs.]
+					[But I don't know the price.]
+					[I don't know if it fits my budget.]
+					^end(CALL)}
+				if (!$age) {
+					[I am not sure if this is right for the child's age.]
+					[I don't know if it won't be too hard for the kid this age.]
+					[What if it's for older children?]
+					^end(CALL)}
+				if (!$interest) {
+					[I don't think the kid would be interested in this one.]
+					[I am not sure this theme would be exciting for her.]
+					[I don't know if the theme of this set is right.]
+					^end(CALL)}
+			}
+
+?: ( [buy purchase aquire get] ) ^reuse(ASK)
+
+?: ( [how what] about ) ^reuse(ASK)
+
+?: ( [fit right] ) ^reuse(ASK)
+
+?: ( be * what * look for ) ^reuse(ASK)
+
+u: ( ~aux_verb * [buy purchase aquire get] ) ^reuse(ASK)
+
+u: ( this * [fit right] ) ^reuse(ASK)
+
+u: ( this * be what * look for ) ^reuse(ASK)

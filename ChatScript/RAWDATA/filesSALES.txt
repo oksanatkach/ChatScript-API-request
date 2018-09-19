@@ -1,0 +1,3 @@
+# underlying conversation system
+RAWDATA/SALES/
+RAWDATA/QUIBBLE_SALES/

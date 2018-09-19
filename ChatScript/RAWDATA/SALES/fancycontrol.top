@@ -1,0 +1,161 @@
+# REMINDER!
+	# change the bot name in:
+		# the first macro
+		# $botprompt
+		# table -> DATA
+	# change the topic name in:
+		# first macro -> ^addtopic
+		# the first rule in ~control
+
+outputmacro: sales()
+	$cs_token =
+		#DO_SUBSTITUTE_SYSTEM |
+		#DO_NUMBER_MERGE |
+		#DO_DATE_MERGE |
+		#DO_PROPERNAME_MERGE |
+		#DO_SPELLCHECK |
+		#DO_PARSE
+
+	^addtopic(~greeting)
+	$cs_control_main = ~control
+	$userprompt = ^"%user: >"
+	$botprompt = ^"sales:"
+
+table:
+	defaultbot (^name)
+	^createfact(^name defaultbot defaultbot)
+	DATA: sales
+
+
+#######################################################################
+
+# look for rule matches in the current topic
+outputmacro: rejoinder_current()
+	if (%response == 0) {
+		^nofail(TOPIC ^rejoinder())
+	}
+
+outputmacro: respond_current()
+	if (%response == 0) {
+		^nofail(TOPIC ^respond(%topic))
+	}
+
+# gambit from current topic if input is empty
+outputmacro: empty()
+	if (%response == 0) {
+		^nofail(TOPIC ^gambit(%topic))
+	}
+
+# look for rule matches in other topics with relevant keywords
+outputmacro: respond_other()
+	if (%response == 0) {
+		@8 = ^keywordtopics()
+		^loop()
+		{
+			$$topic = ^first(@8subject)
+			^nofail(TOPIC ^respond($$topic))
+			if (%response != 0) {^end(RULE)}
+		}
+	}
+
+# gambit from topics with relevant keywords
+outputmacro: gambit_keywords()
+	if (%response == 0 AND ^marked(%topic)) {
+		^nofail(TOPIC ^gambit(%topic))
+	}
+	if (%response == 0) {
+		@8 = ^keywordtopics()
+		^loop()
+		{
+			$$topic = ^first(@8subject)
+			^nofail(TOPIC ^gambit($$topic))
+			if (%response != 0) {^end(RULE)}
+		}
+	}
+
+
+# gambit from the current topic
+outputmacro: gambit_current()
+	if (%response == 0) {
+		^nofail(TOPIC ^gambit(%topic))
+	}
+
+# gambit from other topics at random
+outputmacro: gambit_other()
+	if (%response == 0) {
+		@8 = ^gambittopics()
+		^loop()
+		{
+			$$topic = ^pick(@8subject)
+			^nofail(TOPIC ^gambit($$topic))
+			if (%response != 0) {^end(RULE)}
+		}
+	}
+
+outputmacro: keywordless()
+	if (%response == 0) {
+		^nofail(TOPIC ^respond(~keywordless))
+	}
+
+outputmacro: quibble()
+	if (%response == 0) {
+		^nofail(TOPIC ^respond(~quibble_all))
+	}
+	if (%outputrejoinder OR %lastquestion) {
+		^end(TOPIC)
+	}
+
+
+outputmacro: lastresort()
+	if (%response == 0) {
+		^repeat() I don't know what to say.
+	}
+
+#######################################################################
+
+
+topic: ~control system ()
+
+# the starting topic
+u: (%input<%userfirstline) ^gambit(~greeting)
+
+# move the rules up or down to change the priority
+
+u: ()	^rejoinder_current()
+		if (%response != 0) {^end(CALL)}
+		if (%response == 0 AND %more) {^next(INPUT) ^retry(RULE)}
+
+u: ()	^respond_current()
+		if (%response != 0) {^end(CALL)}
+		if (%response == 0 AND %more) {^next(INPUT) ^retry(RULE)}
+
+u: (%length == 0) ^empty()
+		if (%response != 0) {^end(CALL)}
+		if (%response == 0 AND %more) {^next(INPUT) ^retry(RULE)}
+
+u: ()	^respond_other()
+		if (%response != 0) {^end(CALL)}
+		if (%response == 0 AND %more) {^next(INPUT) ^retry(RULE)}
+
+u: ()	^gambit_keywords()
+		if (%response != 0) {^end(CALL)}
+		if (%response == 0 AND %more) {^next(INPUT) ^retry(RULE)}
+
+u: ()	^gambit_current()
+		if (%response != 0) {^end(CALL)}
+		if (%response == 0 AND %more) {^next(INPUT) ^retry(RULE)}
+
+u: ()	^gambit_other()
+		if (%response != 0) {^end(CALL)}
+		if (%response == 0 AND %more) {^next(INPUT) ^retry(RULE)}
+
+u: ()	^keywordless()
+		if (%response != 0) {^end(CALL)}
+		if (%response == 0 AND %more) {^next(INPUT) ^retry(RULE)}
+
+u: ()	^quibble()
+		if (%response != 0) {^end(CALL)}
+		if (%response == 0 AND %more) {^next(INPUT) ^retry(RULE)}
+
+u: ()	^lastresort()
+		if (%response != 0) {^end(CALL)}
